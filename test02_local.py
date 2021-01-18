@@ -99,5 +99,8 @@ def updateuser(user):
 
 
 if __name__ == "__main__":
-    APP.run(debug=True)  # , ssl_context="adhoc")
-    # APP.run(ssl_context="adhoc")
+    ENABLE_SSL: bool = False
+    if ENABLE_SSL:
+        APP.run(ssl_context="adhoc")
+    else:
+        APP.run(debug=True)
