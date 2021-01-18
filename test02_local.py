@@ -51,7 +51,7 @@ def dbadd() -> bool:
 
 @APP.route("/dev/db/<user>", methods=["GET"])
 @AUTH.login_required
-def getuser(user: str) -> dict:
+def getuser(user: str) -> str:
     """Retrieve user information from the database."""
     with sqlite3.connect("datastore/userinfo.db") as conn:
         tmpcur = conn.cursor()
@@ -64,7 +64,7 @@ def getuser(user: str) -> dict:
 
 @APP.route("/dev/db", methods=["GET"])
 @AUTH.login_required
-def dbdump() -> dict:
+def dbdump() -> str:
     """Retrieve full database contents."""
     with sqlite3.connect("datastore/userinfo.db") as conn:
         tmpcur = conn.cursor()
