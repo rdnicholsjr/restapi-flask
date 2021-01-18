@@ -12,8 +12,6 @@ from flask_cors import CORS
 APP = Flask(__name__)
 CORS(APP)
 AUTH = HTTPBasicAuth()
-
-
 USERS: dict = {
     "ben": generate_password_hash("ben"),
     "rod": generate_password_hash("rod")
@@ -39,7 +37,7 @@ def home():
 
 @APP.route("/dev/db", methods=["POST"])
 @AUTH.login_required
-def dbadd():
+def dbadd() -> bool:
     """Add data to the database."""
     data = json.loads(request.get_json())
     with sqlite3.connect("datastore/userinfo.db") as conn:
@@ -48,54 +46,57 @@ def dbadd():
                        (data["name"], data["email"]))
         conn.commit()
         return "success"
+# TODO: Add failure case
 
 
 @APP.route("/dev/db/<user>", methods=["GET"])
 @AUTH.login_required
-def getuser(user):
+def getuser(user: str) -> dict:
     """Retrieve user information from the database."""
     with sqlite3.connect("datastore/userinfo.db") as conn:
         tmpcur = conn.cursor()
         tmpcur.execute("SELECT username, email FROM userinfo WHERE username LIKE "
                        + "\"" + user + "\"")
-        retdata = {"result": [{"name": row[0], "email": row[1]}
+        retdata: dict = {"result": [{"name": row[0], "email": row[1]}
                               for row in tmpcur if row is not None]}
-        return json.dumps(retdata)
+    return json.dumps(retdata)
 
 
 @APP.route("/dev/db", methods=["GET"])
 @AUTH.login_required
-def dbdump():
+def dbdump() -> dict:
     """Retrieve full database contents."""
     with sqlite3.connect("datastore/userinfo.db") as conn:
         tmpcur = conn.cursor()
         tmpcur.execute("SELECT username, email FROM userinfo")
         retdata = {"result": [{"name": row[0], "email": row[1]}
                               for row in tmpcur if row is not None]}
-        return json.dumps(retdata)
+    return json.dumps(retdata)
 
 
 @APP.route("/dev/db/<user>", methods=["DELETE"])
 @AUTH.login_required
-def deluser(user):
+def deluser(user: str) -> bool:
     """Delete a single user from the user database."""
     with sqlite3.connect("datastore/userinfo.db") as conn:
         tmpcur = conn.cursor()
         tmpcur.execute(
             "DELETE FROM userinfo WHERE username LIKE " + "\"" + user + "\"")
         return "success"
+# TODO: Add failure case
 
 
 @APP.route("/dev/db/<user>", methods=["PATCH"])
 @AUTH.login_required
-def updateuser(user):
+def updateuser(user: str) -> bool:
     """Update a given user's e-mail address."""
-    data = json.loads(request.json)
+    data: dict = json.loads(request.json)
     with sqlite3.connect("datastore/userinfo.db") as conn:
         tmpcur = conn.cursor()
         tmpcur.execute("UPDATE userinfo SET email = " + "\"" +
                        data["email"] + "\" WHERE username LIKE " + "\"" + user + "\"")
         return "success"
+# TODO: Add failure case
 
 
 if __name__ == "__main__":
