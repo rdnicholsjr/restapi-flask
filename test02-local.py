@@ -22,7 +22,7 @@ users = {
 
 
 @auth.verify_password
-def verify_password(username, password):
+def verify_password(username: str, password: str) -> str:
     if username in users and \
             check_password_hash(users.get(username), password):
         return username
@@ -37,7 +37,7 @@ def home():
 
 @APP.route('/dev/db', methods=['POST'])
 @auth.login_required
-def dbadd():
+def dbadd() -> str:
     """ Database Add"""
     data = json.loads(request.get_json())
     with sqlite3.connect('datastore/userinfo.db') as conn:
@@ -50,7 +50,7 @@ def dbadd():
 
 @APP.route('/dev/db/<user>', methods=['GET'])
 @auth.login_required
-def getuser(user):
+def getuser(user: str) -> str:
     """ Return single user info """
     with sqlite3.connect('datastore/userinfo.db') as conn:
         tmpcur = conn.cursor()
@@ -63,7 +63,7 @@ def getuser(user):
 
 @APP.route('/dev/db', methods=['GET'])
 @auth.login_required
-def dbdump():
+def dbdump() -> str:
     """ Return DB contents"""
     with sqlite3.connect('datastore/userinfo.db') as conn:
         tmpcur = conn.cursor()
@@ -75,7 +75,7 @@ def dbdump():
 
 @APP.route('/dev/db/<user>', methods=['DELETE'])
 @auth.login_required
-def deluser(user):
+def deluser(user: str)-> str:
     """ Delete single user """
     with sqlite3.connect('datastore/userinfo.db') as conn:
         tmpcur = conn.cursor()
@@ -85,7 +85,7 @@ def deluser(user):
 
 @APP.route('/dev/db/<user>', methods=['PATCH'])
 @auth.login_required
-def updateuser(user):
+def updateuser(user: str) -> str:
     """ Update user email """
     data = json.loads(request.json)
     with sqlite3.connect('datastore/userinfo.db') as conn:
