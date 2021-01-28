@@ -75,12 +75,12 @@ def dbdump() -> str:
 
 @APP.route('/dev/db/<user>', methods=['DELETE'])
 @auth.login_required
-def deluser(user: str)-> str:
+def deluser(user: str)-> dict:
     """ Delete single user """
     with sqlite3.connect('datastore/userinfo.db') as conn:
         tmpcur = conn.cursor()
         tmpcur.execute("DELETE FROM userinfo WHERE username LIKE " + "\"" + user + "\"")
-        return "success"
+        return json.dumps({'result': True})
 
 
 @APP.route('/dev/db/<user>', methods=['PATCH'])
