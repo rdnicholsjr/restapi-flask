@@ -16,12 +16,36 @@ function generateTableHead(table, data) {
 }
 
 function generateTable(table, data) {
+    var rowcount = 1;
     for (let element of data) {
         let row = table.insertRow();
         for (key in element) {
             let cell = row.insertCell();
             let text = document.createTextNode(element[key]);
             cell.appendChild(text);
+        }
+        var btn = document.createElement("button");
+        btn.value=rowcount
+        btn.innerHTML="DEL";
+        btn.addEventListener("click", delbtnfnc);
+        let cell = row.insertCell();
+        cell.appendChild(btn);
+        rowcount += 1;
+    }
+}
+
+function delbtnfnc() {
+    var returnstate = '';
+    var url = 'http://localhost:5000/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
+    const request = new XMLHttpRequest();
+    request.open('DELETE', url);
+    request.send();
+    request.onload = (e) => {
+        returnstate = JSON.parse(request.response)['result'];
+        if (returnstate) {
+            for (scell = 0; scell < 2; scell++) {
+                table.rows[this.value].cells[scell].innerHTML = "<s>" + String(table.rows[this.value].cells[scell].innerHTML) + "</s>";
+            }
         }
     }
 }
