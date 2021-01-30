@@ -37,15 +37,14 @@ def home():
 
 @APP.route('/dev/db', methods=['POST'])
 @auth.login_required
-def dbadd() -> str:
+def dbadd() -> dict:
     """ Database Add"""
-    data = json.loads(request.get_json())
     with sqlite3.connect('datastore/userinfo.db') as conn:
         tmpcur = conn.cursor()
         tmpcur.execute("INSERT INTO userinfo (username, email) VALUES (?, ?)",
-                       (data['name'], data['email']))
+                       (request.json['name'], request.json['email']))
         conn.commit()
-        return "success"
+        return json.dumps({'result': True})
 
 
 @APP.route('/dev/db/<user>', methods=['GET'])
