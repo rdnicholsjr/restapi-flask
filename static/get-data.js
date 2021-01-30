@@ -2,8 +2,12 @@ var clearbtn = document.getElementById('clearbtn');
 var searchbtn = document.getElementById('searchbtn');
 var table = document.querySelector("table");
 var searchinput = document.getElementById('searchfilter');
+var usertoaddbox = document.getElementById('newusernamebox');
+var emailtoaddbox = document.getElementById('newuseremailbox');
+var useraddbtn = document.getElementById('useraddbtn');
+var addstatusmsg = document.getElementById('addstatusmsg');
 
-        
+
 function generateTableHead(table, data) {
     let thead = table.createTHead();
     let row = thead.insertRow();
@@ -57,8 +61,9 @@ function clearTable(table) {
 }
 
 clearbtn.onclick = function(){
-    console.log(String(table.rows.length) + ' rows to delete')
-    searchfilter.value="";
+    //Leave this Ben...  I need to extract this into sampe (re-usable) code.
+    //console.log(String(table.rows.length) + ' rows to delete')
+    searchinput.value="";
     clearTable(table)
 };
 
@@ -78,4 +83,32 @@ searchbtn.onclick = function(){
         generateTable(table, temp);
         generateTableHead(table, data);
     }
+    searchinput.value="";
 };
+
+useraddbtn.onclick = function(){
+    var usertoadd = {'name': usertoaddbox.value, 'email': emailtoaddbox.value};
+    if ((usertoadd['name'] != "") && (usertoadd['email'] != "")) {
+        var url = 'http://localhost:5000/dev/db'
+        const request = new XMLHttpRequest();
+        request.open('POST', url);
+        request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        request.send(JSON.stringify(usertoadd));
+        request.onload = (e) => {
+            if (JSON.parse(request.response)['result']) {
+                addstatusmsg.innerHTML = "user " + usertoadd['name'] + " added";
+                usertoaddbox.value = "";
+                emailtoaddbox.value = "";
+            } else {
+                addfailed();
+            }
+        }
+    } else {
+        addfailed();
+    }
+};
+
+
+function addfailed() {
+    addstatusmsg.innerHTML = "User add failed";
+}
