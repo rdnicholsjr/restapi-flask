@@ -84,14 +84,14 @@ def deluser(user: str)-> dict:
 
 @APP.route('/dev/db/<user>', methods=['PATCH'])
 @auth.login_required
-def updateuser(user: str) -> str:
+def updateuser(user: str) -> dict:
     """ Update user email """
-    data = json.loads(request.json)
+    #data = json.loads(request.json)
     with sqlite3.connect('datastore/userinfo.db') as conn:
         tmpcur = conn.cursor()
         tmpcur.execute("UPDATE userinfo SET email = " + "\"" +
-                       data['email'] + "\" WHERE username LIKE " + "\"" + user + "\"")
-        return "success"
+                       request.json + "\" WHERE username LIKE " + "\"" + user + "\"")
+        return json.dumps({'result': True})
 
 
 if __name__ == "__main__":
