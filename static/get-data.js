@@ -5,7 +5,7 @@ var searchinput = document.getElementById('searchfilter');
 var usertoaddbox = document.getElementById('newusernamebox');
 var emailtoaddbox = document.getElementById('newuseremailbox');
 var useraddbtn = document.getElementById('useraddbtn');
-var addstatusmsg = document.getElementById('addstatusmsg');
+var statusmsg = document.getElementById('statusmsg');
 
 
 function generateTableHead(table, data) {
@@ -28,25 +28,33 @@ function generateTable(table, data) {
             let text = document.createTextNode(element[key]);
             cell.appendChild(text);
         }
-        var btn = document.createElement("button");
-        btn.value=rowcount
-        btn.innerHTML="DEL";
-        btn.addEventListener("click", delbtnfnc);
-        let cell = row.insertCell();
-        cell.appendChild(btn);
-        rowcount += 1;
+        //Delete button
+        var delbtn = document.createElement("button");
+        delbtn.value=rowcount;
+        delbtn.innerHTML="DEL";
+        delbtn.addEventListener("click", delbtnfnc);
+        let delcell = row.insertCell();
+        delcell.appendChild(delbtn);
+        
+        //Edit button
+        var edbtn = document.createElement('button');
+        edbtn.value=rowcount;
+        edbtn.innerHTML='EDIT';
+        edbtn.addEventListener('click', editfieldfnc);
+        let edcell = row.insertCell();
+        edcell.appendChild(edbtn);
+
+        rowcount += 1;        
     }
 }
 
 function delbtnfnc() {
-    var returnstate = '';
     var url = 'http://localhost:5000/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
     const request = new XMLHttpRequest();
     request.open('DELETE', url);
     request.send();
     request.onload = (e) => {
-        returnstate = JSON.parse(request.response)['result'];
-        if (returnstate) {
+        if (JSON.parse(request.response)['result']) {
             for (scell = 0; scell < 2; scell++) {
                 table.rows[this.value].cells[scell].innerHTML = "<s>" + String(table.rows[this.value].cells[scell].innerHTML) + "</s>";
             }
@@ -96,7 +104,7 @@ useraddbtn.onclick = function(){
         request.send(JSON.stringify(usertoadd));
         request.onload = (e) => {
             if (JSON.parse(request.response)['result']) {
-                addstatusmsg.innerHTML = "user " + usertoadd['name'] + " added";
+                statusmsg.innerHTML = "user " + usertoadd['name'] + " added";
                 usertoaddbox.value = "";
                 emailtoaddbox.value = "";
             } else {
@@ -110,5 +118,31 @@ useraddbtn.onclick = function(){
 
 
 function addfailed() {
-    addstatusmsg.innerHTML = "User add failed";
+    statusmsg.innerHTML = "User add failed";
+};
+
+
+function editfieldfnc() {
+    var newemail = prompt("User's new email:");
+    if ((newemail != null ) && (newemail != "") && (newemail != String(table.rows[this.value].cells[1].innerHTML))) {
+        var url = 'http://localhost:5000/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
+        const request = new XMLHttpRequest();
+        request.open('PATCH', url);
+        request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        request.send(JSON.stringify(newemail));
+        request.onload = (e) => {
+            if (JSON.parse(request.response)['result']) {
+                table.rows[this.value].cells[1].innerHTML = "<i>" + newemail + "</i>";
+            } else {
+                editfailed();
+            }
+        }
+    } else {
+    editfailed();
+    }
+};
+
+
+function editfailed() {
+    statusmsg.innerHTML = "Edit failed"
 }
