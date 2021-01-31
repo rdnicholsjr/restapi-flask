@@ -123,8 +123,18 @@ function addfailed() {
 
 
 function editfieldfnc() {
-    var newemail = prompt("User's new email:");
-    if ((newemail != null ) && (newemail != "") && (newemail != String(table.rows[this.value].cells[1].innerHTML))) {
+    //So much easier to handle...
+    var oldmail=String(table.rows[this.value].cells[1].innerHTML);
+
+    //remove HTMl marking for italication if they exist from previous edit without refreshing table info.
+    if (oldmail.slice(0,3) == "<i>") {
+        oldmail = oldmail.slice(3, (oldmail.length - 4))
+    }
+
+    var newemail = prompt("User's new email:", oldmail);
+
+    //push change to DB and italicize new email if successful.
+    if ((newemail != null ) && (newemail != "") && (newemail != oldmail)) {
         var url = 'http://localhost:5000/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
         const request = new XMLHttpRequest();
         request.open('PATCH', url);
@@ -134,15 +144,8 @@ function editfieldfnc() {
             if (JSON.parse(request.response)['result']) {
                 table.rows[this.value].cells[1].innerHTML = "<i>" + newemail + "</i>";
             } else {
-                editfailed();
+                statusmsg.innerHTML = "Edit failed";
             }
         }
-    } else {
-    editfailed();
     }
 };
-
-
-function editfailed() {
-    statusmsg.innerHTML = "Edit failed"
-}
