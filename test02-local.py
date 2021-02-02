@@ -12,7 +12,9 @@ from flask_cors import CORS
 
 APP = Flask(__name__)
 CORS(APP)
-auth = HTTPBasicAuth()
+AUTH = HTTPBasicAuth()
+ENABLE_SSL: bool = False
+SITE_INDEX: str = 'test-page1.html'
 
 
 users = {
@@ -21,7 +23,7 @@ users = {
 }
 
 
-@auth.verify_password
+@AUTH.verify_password
 def verify_password(username: str, password: str) -> str:
     if username in users and \
             check_password_hash(users.get(username), password):
@@ -29,14 +31,14 @@ def verify_password(username: str, password: str) -> str:
 
 
 @APP.route('/')
-@auth.login_required
+@AUTH.login_required
 def home():
     """ Client Script """
-    return render_template("test-page1.html")
+    return render_template(SITE_INDEX)
 
 
 @APP.route('/dev/db', methods=['POST'])
-@auth.login_required
+@AUTH.login_required
 def dbadd() -> dict:
     """ Database Add"""
     with sqlite3.connect('datastore/userinfo.db') as conn:
@@ -48,7 +50,7 @@ def dbadd() -> dict:
 
 
 @APP.route('/dev/db/<user>', methods=['GET'])
-@auth.login_required
+@AUTH.login_required
 def getuser(user: str) -> str:
     """ Return single user info """
     with sqlite3.connect('datastore/userinfo.db') as conn:
@@ -61,7 +63,7 @@ def getuser(user: str) -> str:
 
 
 @APP.route('/dev/db', methods=['GET'])
-@auth.login_required
+@AUTH.login_required
 def dbdump() -> str:
     """ Return DB contents"""
     with sqlite3.connect('datastore/userinfo.db') as conn:
@@ -73,7 +75,7 @@ def dbdump() -> str:
 
 
 @APP.route('/dev/db/<user>', methods=['DELETE'])
-@auth.login_required
+@AUTH.login_required
 def deluser(user: str)-> dict:
     """ Delete single user """
     with sqlite3.connect('datastore/userinfo.db') as conn:
@@ -83,10 +85,9 @@ def deluser(user: str)-> dict:
 
 
 @APP.route('/dev/db/<user>', methods=['PATCH'])
-@auth.login_required
+@AUTH.login_required
 def updateuser(user: str) -> dict:
     """ Update user email """
-    #data = json.loads(request.json)
     with sqlite3.connect('datastore/userinfo.db') as conn:
         tmpcur = conn.cursor()
         tmpcur.execute("UPDATE userinfo SET email = " + "\"" +
@@ -95,5 +96,7 @@ def updateuser(user: str) -> dict:
 
 
 if __name__ == "__main__":
-    APP.run(debug=True)#, ssl_context='adhoc')
-    #APP.run(ssl_context='adhoc')
+    if ENABLE_SSL:
+        APP.run(ssl_context='adhoc')
+    else:
+        APP.run(debug=True)
