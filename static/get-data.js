@@ -126,7 +126,7 @@ function editfieldfnc() {
     //So much easier to handle...
     var oldmail=String(table.rows[this.value].cells[1].innerHTML);
 
-    //remove HTMl marking for italication if they exist from previous edit without refreshing table info.
+    //remove HTML marking for italication if they exist from previous edit without refreshing table info.
     if (oldmail.slice(0,3) == "<i>") {
         oldmail = oldmail.slice(3, (oldmail.length - 4))
     }
