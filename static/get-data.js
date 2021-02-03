@@ -7,6 +7,8 @@ var emailtoaddbox = document.getElementById('newuseremailbox');
 var useraddbtn = document.getElementById('useraddbtn');
 var statusmsg = document.getElementById('statusmsg');
 
+var SERVERHOST = 'http://127.0.0.1:5000';
+
 
 function generateTableHead(table, data) {
     let thead = table.createTHead();
@@ -49,7 +51,7 @@ function generateTable(table, data) {
 }
 
 function delbtnfnc() {
-    var url = 'http://localhost:5000/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
+    var url = SERVERHOST + '/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
     const request = new XMLHttpRequest();
     request.open('DELETE', url);
     request.send();
@@ -78,7 +80,7 @@ clearbtn.onclick = function(){
 searchbtn.onclick = function(){
     clearTable(table)
     var searchstring = searchinput.value
-    var url = 'http://localhost:5000/dev/db';
+    var url = SERVERHOST + '/dev/db';
     if (searchstring != "") {
         url += '/' + searchstring;
     }
@@ -97,7 +99,7 @@ searchbtn.onclick = function(){
 useraddbtn.onclick = function(){
     var usertoadd = {'name': usertoaddbox.value, 'email': emailtoaddbox.value};
     if ((usertoadd['name'] != "") && (usertoadd['email'] != "")) {
-        var url = 'http://localhost:5000/dev/db'
+        var url = SERVERHOST + '/dev/db'
         const request = new XMLHttpRequest();
         request.open('POST', url);
         request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -135,7 +137,7 @@ function editfieldfnc() {
 
     //push change to DB and italicize new email if successful.
     if ((newemail != null ) && (newemail != "") && (newemail != oldmail)) {
-        var url = 'http://localhost:5000/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
+        var url = SERVERHOST + '/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
         const request = new XMLHttpRequest();
         request.open('PATCH', url);
         request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
