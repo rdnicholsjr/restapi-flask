@@ -1,9 +1,10 @@
 version: 0.2
-version: 0.2
+
 phases:
+  pre_build:
+    commands:
+      - python -m ensurepip
+      - pip install pylint
   build:
     commands:
-      - pwd
-      - ls
-      - pip install pylint
-      - pylint test02-local.py
+      - python -m pylint test02-local.py
