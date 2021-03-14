@@ -1,0 +1,13 @@
+version: 0.0
+os: linux
+files:
+  - source: /test02-local.py
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/delint.sh
+      timeout: 300
+      runas: root
