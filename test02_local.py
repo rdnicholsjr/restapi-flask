@@ -28,7 +28,7 @@ def verify_password(username: str, password: str) -> str:
     """ Return string: username if hash maches on provided password and userdb hash """
     if username in users and \
             check_password_hash(users.get(username), password):
-        return username #pylint: disable=inconsistent-return-statements
+        return username # pylint: disable=inconsistent-return-statements
 
 
 @APP.route('/')
