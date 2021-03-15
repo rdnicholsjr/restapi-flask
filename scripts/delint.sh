@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pylint test02-local.py
+pylint test02_local.py
