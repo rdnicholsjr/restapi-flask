@@ -3,8 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - python -m ensurepip
-      - pip install pylint
+      - scripts/install-dependencies.sh
   build:
     commands:
-      - python -m pylint test02-local.py
+      - scripts/delint.sh
