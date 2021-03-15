@@ -3,6 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - chmod 777 scripts/*
       - scripts/install-dependencies.sh
   build:
     commands:
