@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 
 APP = Flask(__name__)
-CORS(APP)
+CORS(APP, origins=['http://localhost', 'https://localhost'], supports_credentials=True)
 AUTH = HTTPBasicAuth()
 ENABLE_SSL: bool = False
 SITE_INDEX: str = 'test-page1.html'
