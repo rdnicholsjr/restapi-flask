@@ -7,8 +7,10 @@ var emailtoaddbox = document.getElementById('newuseremailbox');
 var useraddbtn = document.getElementById('useraddbtn');
 var statusmsg = document.getElementById('statusmsg');
 
-var SERVERHOST = 'http://127.0.0.1:5000';
+var SERVERHOST = 'http://localhost';
 
+var uname = 'rod';
+var pword = 'rod';
 
 function generateTableHead(table, data) {
     let thead = table.createTHead();
@@ -54,6 +56,7 @@ function delbtnfnc() {
     var url = SERVERHOST + '/dev/db/' + String(table.rows[this.value].cells[0].innerHTML);
     const request = new XMLHttpRequest();
     request.open('DELETE', url);
+    request.withCredentials = true;
     request.send();
     request.onload = (e) => {
         if (JSON.parse(request.response)['result']) {
@@ -86,6 +89,7 @@ searchbtn.onclick = function(){
     }
     const request = new XMLHttpRequest();
     request.open('GET', url);
+    request.withCredentials = true;
     request.send();
     request.onload = (e) => {
         temp = JSON.parse(request.response)['result'];
@@ -103,6 +107,7 @@ useraddbtn.onclick = function(){
         const request = new XMLHttpRequest();
         request.open('POST', url);
         request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        request.withCredentials = true;
         request.send(JSON.stringify(usertoadd));
         request.onload = (e) => {
             if (JSON.parse(request.response)['result']) {
@@ -141,7 +146,8 @@ function editfieldfnc() {
         const request = new XMLHttpRequest();
         request.open('PATCH', url);
         request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        request.send(JSON.stringify(newemail));
+        request.withCredentials = true;
+    request.send(JSON.stringify(newemail));
         request.onload = (e) => {
             if (JSON.parse(request.response)['result']) {
                 table.rows[this.value].cells[1].innerHTML = "<i>" + newemail + "</i>";
