@@ -18,9 +18,9 @@ Http basic auth:  Working
 
 CORS config:  Working
 
-NginX TLS Offload:  Queued
+NginX TLS Offload:  Working
 
-Manual deploy to EC2 w/DNS:  Queued
+Manual deploy to EC2 w/DNS:  Working
 
 Cloudformation deploy:  Queued
 
